@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__PROJECT_NAME__ | Architecture and state machines</title>
+<style>
+:root{--ink:#1e293b;--muted:#475569;--line:#d9e0e9;--blue:#1d4ed8;--paper:#fff;--wash:#f5f7fa}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,a{font:inherit}a{color:var(--blue)}button{cursor:pointer;background:white;border:1px solid var(--line);border-radius:7px;padding:9px 13px;min-height:44px;color:var(--ink)}button:hover{background:#eef3fa}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}button[aria-pressed=true]{background:var(--ink);color:white;border-color:var(--ink)}.layout{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}aside{background:var(--paper);border-right:1px solid var(--line);padding:28px 18px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-weight:700;font-size:21px;letter-spacing:-.6px}.subtle{color:var(--muted);font-size:14px}.eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:650;color:var(--muted)}.nav-link{display:block;text-decoration:none;color:var(--ink);padding:10px 12px;border-radius:6px;margin:2px 0;font-size:14px;min-height:44px}.nav-link[aria-current=page]{background:#eaf0fc;color:var(--blue);font-weight:650}.nav-link small{display:block;color:var(--muted);font-size:11px}.nav-link:hover{background:#f1f5f9}main{padding:32px 38px;min-width:0;max-width:1600px}h1{font-size:34px;letter-spacing:-1px;line-height:1.2;margin:12px 0}h2{font-size:21px;margin:26px 0 12px}#summary{max-width:850px;color:var(--muted);margin:0 0 22px}.topline{display:flex;justify-content:space-between;align-items:center;gap:16px}.status{font-size:12px;border:1px solid var(--line);padding:5px 9px;border-radius:20px;background:white;white-space:nowrap}.diagram-shell{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}.toolbar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center}.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}#scale-label{width:48px;font-size:13px;text-align:center}.viewport{height:580px;overflow:auto;padding:24px;background-image:radial-gradient(#d7dde6 .65px,transparent .65px);background-size:18px 18px}#diagram{width:max-content;min-width:100%;text-align:center}#diagram svg{display:block;margin:auto;max-width:none!important;height:auto}#render-status{margin:0 16px;padding:8px 0;font-size:12px;color:var(--muted)}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:22px}.card{display:block;text-decoration:none;color:var(--ink);padding:16px 18px;background:white;border:1px solid var(--line);border-radius:8px}.card:hover{border-color:var(--blue)}.card strong{display:block;font-size:16px}.card span{display:block;font-size:13px;color:var(--muted);margin-top:5px}.notes{background:white;border:1px solid var(--line);border-radius:8px;padding:10px 24px}.notes li{margin:12px 0}details{background:white;border:1px solid var(--line);border-radius:7px;margin:9px 0;padding:12px 16px}summary{cursor:pointer;overflow-wrap:anywhere;min-height:28px;font-size:14px}pre{font:13px/1.6 ui-monospace,Consolas,monospace;overflow:auto;background:#f5f7fa;border-radius:6px;padding:16px;white-space:pre}code{font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse;background:white;font-size:13px}td,th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th{background:#eef2f7}.table-scroll{overflow:auto}footer{margin-top:32px;font-size:13px;color:var(--muted)}.skip{position:absolute;top:-100px;left:10px;background:white;padding:10px}.skip:focus{top:10px;z-index:5}#inventory{display:none}.module{font-size:13px;margin:7px 0;overflow-wrap:anywhere}.diagram-shell:fullscreen{display:flex;flex-direction:column;background:white}.diagram-shell:fullscreen .viewport{height:auto;flex:1}@media(max-width:800px){.layout{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:18px}nav{display:flex;gap:6px;overflow:auto}.nav-link{min-width:170px}main{padding:24px 16px}h1{font-size:28px}.viewport{height:480px;padding:12px}.topline{align-items:start}.toolbar{padding:10px}.status{white-space:normal}}@media print{aside,.toolbar,.cards,footer{display:none}.layout{display:block}main{padding:0}.viewport{height:auto;overflow:visible;background:none}#diagram svg{width:100%!important}details pre{display:none}}
+</style>
+</head>
+<body>
+<a href="#content" class="skip">Skip to documentation</a>
+<div class="layout">
+<aside>
+<div class="brand">__PROJECT_NAME__</div>
+<p class="subtle">Architecture &amp; state machines</p>
+<nav aria-label="Documentation layers" id="navigation"></nav>
+<p class="subtle">Two views. One set of transitions.</p>
+<a href="index.md" class="subtle">Read the Markdown version</a>
+</aside>
+<main id="content" tabindex="-1">
+<div class="topline"><div class="eyebrow" id="kind"></div><span class="status" id="freshness">Source snapshot</span></div>
+<h1 id="title"></h1><p id="summary"></p>
+<section class="diagram-shell" id="shell" aria-label="Interactive diagram">
+<div class="toolbar">
+<div class="controls" role="group" aria-label="Diagram style"><button id="grouped" aria-pressed="true">Grouped</button><button id="flat" aria-pressed="false">Flat</button></div>
+<div class="controls" role="group" aria-label="Diagram zoom"><button id="zoom-out" aria-label="Zoom out">−</button><span id="scale-label" aria-live="polite">100%</span><button id="zoom-in" aria-label="Zoom in">+</button><button id="fit">Fit width</button><button id="expand">Full screen</button></div>
+</div>
+<div class="viewport" id="viewport" tabindex="0" aria-label="Diagram. Scroll to explore. Use zoom controls to resize."><div id="diagram"></div></div>
+<p id="render-status" role="status" aria-live="polite">Rendering diagram…</p>
+</section>
+<div id="cards" class="cards"></div>
+<section id="details"><h2>Behavior and boundaries</h2><div class="notes"><ul id="notes"></ul></div><div id="transitions"></div><h2>Source evidence</h2><p class="subtle">Expand a symbol to inspect the source used for this snapshot. Guards are shown exactly as implemented.</p><div id="sources"></div><h2>Related checks</h2><div id="tests"></div><details><summary>Diagram text</summary><pre id="diagram-text"></pre></details></section>
+<section id="inventory"><h2>Modules in this checkout</h2><p class="subtle">Source files used for this documentation. Only registered graph nodes form an extracted executable graph.</p><div id="modules"></div></section>
+<footer>Source-refreshed documentation. No model calls or runtime imports.<br>Open this HTML file directly in your browser. No server is required.<br>Run <code>python scripts/build_architecture_docs.py</code> after code changes.<br>Run <code>python scripts/build_architecture_docs.py --check</code> to detect drift. Review authored notes when behavior changes.</footer>
+</main></div>
+<script id="doc-data" type="application/json">__DOCUMENTATION_DATA__</script>
+<script>__MERMAID_RENDERER__</script>
+<script>
+const data=JSON.parse(document.getElementById('doc-data').textContent);
+document.title=data.project+' | Architecture and state machines';
+const $=id=>document.getElementById(id);
+const escapeHtml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let current,view='grouped',scale=1,naturalWidth=900,renderSerial=0;
+const sourceUrl=path=>data.projectHref+'/'+path;
+const link=(path,label)=>`<a href="${escapeHtml(sourceUrl(path))}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+if(window.mermaid)mermaid.initialize({startOnLoad:false,securityLevel:'strict',theme:'base',flowchart:{htmlLabels:false,curve:'basis',useMaxWidth:false,nodeSpacing:40,rankSpacing:55},themeVariables:{fontFamily:'ui-monospace, Consolas, monospace',fontSize:'14px',primaryColor:'#ffffff',primaryBorderColor:'#64748b',primaryTextColor:'#1e293b',lineColor:'#475569',clusterBkg:'#f8fafc',clusterBorder:'#b8c4d4',edgeLabelBackground:'#eef2f7'}});
+function zoom(value){scale=Math.max(.2,Math.min(2.5,value));const svg=$('diagram').querySelector('svg');if(svg)svg.style.width=Math.round(naturalWidth*scale)+'px';$('scale-label').textContent=Math.round(scale*100)+'%';}
+function fit(){zoom(Math.min(1,($('viewport').clientWidth-48)/naturalWidth));}
+function compactSelfLoops(svg){
+  const paths=[...svg.querySelectorAll('.flowchart-link')];
+  const labels=[...svg.querySelectorAll('.edgeLabels > .edgeLabel')];
+  paths.forEach((path,index)=>{
+    const from=[...path.classList].find(name=>name.startsWith('LS-'))?.slice(3);
+    const to=[...path.classList].find(name=>name.startsWith('LE-'))?.slice(3);
+    if(!from || from!==to)return;
+    const node=[...svg.querySelectorAll('.node')].find(node=>node.dataset.id===from);
+    const box=node.getBBox();
+    const matrix=path.parentNode.getCTM().inverse().multiply(node.getCTM());
+    const point=new DOMPoint(box.x+box.width,box.y+box.height/2).matrixTransform(matrix);
+    const x=point.x,y=point.y;
+    path.setAttribute('d',`M ${x} ${y-6} C ${x+50} ${y-24}, ${x+50} ${y+24}, ${x+5} ${y+6}`);
+    path.dataset.compactLoop='true';
+    const label=labels[index];
+    const words=label.textContent.trim().split(/\s+/);
+    label.setAttribute('aria-label',words.join(' '));
+    const lines=[];
+    for(const word of words){
+      if(!lines.length || lines.at(-1).length+word.length+1>24)lines.push(word);
+      else lines[lines.length-1]+=' '+word;
+    }
+    label.setAttribute('transform',`translate(${x+55},${y-lines.length*16/2})`);
+    const group=label.querySelector('.label');
+    group.setAttribute('transform','translate(0,0)');
+    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+    lines.forEach((line,index)=>{
+      const span=document.createElementNS(text.namespaceURI,'tspan');
+      span.setAttribute('x','0');span.setAttribute('dy',index?'16':'14');
+      span.textContent=line+' ';span.setAttribute('xml:space','preserve');text.append(span);
+    });
+    group.replaceChildren(text);
+    const bounds=text.getBBox();
+    const background=document.createElementNS(text.namespaceURI,'rect');
+    background.setAttribute('x',bounds.x-4);background.setAttribute('y',bounds.y-2);
+    background.setAttribute('width',bounds.width+8);background.setAttribute('height',bounds.height+4);
+    group.prepend(background);
+  });
+}
+async function render(){const serial=++renderSerial;const text=view==='grouped'?current.mermaid:current.flat;$('diagram-text').textContent=text;$('grouped').setAttribute('aria-pressed',view==='grouped');$('flat').setAttribute('aria-pressed',view==='flat');$('render-status').textContent='Rendering diagram…';try{if(!window.mermaid)throw Error('Diagram renderer unavailable');const result=await mermaid.render('diagram-'+serial,text);if(serial!==renderSerial)return;$('diagram').innerHTML=result.svg;const svg=$('diagram').querySelector('svg');compactSelfLoops(svg);naturalWidth=svg.viewBox.baseVal.width;zoom(1);$('viewport').scrollTo(0,0);$('render-status').textContent='Scroll to explore. Grouped and Flat retain the same states and transitions.';}catch(error){if(serial!==renderSerial)return;$('diagram').innerHTML='<pre>'+escapeHtml(text)+'</pre>';$('render-status').textContent='Diagram could not render. Diagram text and source evidence remain available.';console.error(error);}}
+function select(){const id=location.hash.slice(1)||'overview';const inventory=id==='modules';current=data.sections.find(section=>section.id===id)||data.sections[0];$('kind').textContent=inventory?'Source inventory':current.kind;$('title').textContent=inventory?'Module inventory':current.title;$('summary').textContent=inventory?'Browse implementation files and cited symbols behind the documented layers.':current.summary;$('shell').hidden=inventory;$('details').hidden=inventory;$('inventory').style.display=inventory?'block':'none';document.querySelectorAll('.nav-link').forEach(node=>{if(node.hash==='#'+(inventory?'modules':current.id))node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');});$('cards').innerHTML=current.id==='overview'&&!inventory?data.sections.slice(1).map(section=>`<a class="card" href="#${section.id}"><strong>${escapeHtml(section.title)}</strong><span>${escapeHtml(section.kind)}</span></a>`).join(''):'';if(inventory)return;$('notes').innerHTML=current.notes.map(note=>'<li>'+escapeHtml(note)+'</li>').join('');$('sources').innerHTML=current.sources.map(source=>`<details><summary><code>${escapeHtml(source.symbol)}</code> · ${escapeHtml(source.path)}:${source.line}</summary><p>${link(source.path,'Open source file')}</p><pre>${escapeHtml(source.code)}</pre></details>`).join('');$('tests').innerHTML=current.tests.map(path=>'<p>'+link(path,path)+'</p>').join('');$('transitions').innerHTML=current.edges?'<h2>Extracted transitions</h2><div class="table-scroll"><table><thead><tr><th>From</th><th>To</th><th>Router or event</th></tr></thead><tbody>'+current.edges.map(edge=>'<tr>'+edge.map(value=>'<td>'+escapeHtml(value||'unconditional')+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'';render();}
+$('navigation').innerHTML=data.sections.map(section=>`<a class="nav-link" href="#${section.id}">${escapeHtml(section.title)}<small>${escapeHtml(section.kind)}</small></a>`).join('')+'<a class="nav-link" href="#modules">Module inventory<small>Referenced and watched source files</small></a>';
+$('modules').innerHTML=data.modules.map(item=>`<details><summary>${escapeHtml(item.path)}</summary><p>${link(item.path,'Open source file')}</p><p class="subtle">${escapeHtml(item.symbols.join(', ')||'Watched source file')}</p></details>`).join('');
+$('grouped').onclick=()=>{view='grouped';render();};$('flat').onclick=()=>{view='flat';render();};$('zoom-in').onclick=()=>zoom(scale+.15);$('zoom-out').onclick=()=>zoom(scale-.15);$('fit').onclick=fit;$('expand').onclick=async()=>{if(document.fullscreenElement)await document.exitFullscreen();else await $('shell').requestFullscreen();fit();};
+window.addEventListener('hashchange',select);select();
+</script>
+</body></html>

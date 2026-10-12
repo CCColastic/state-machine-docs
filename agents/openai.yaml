@@ -1,0 +1,6 @@
+interface:
+  display_name: "Architecture and State Machines"
+  short_description: "Source-grounded architecture in standalone HTML"
+  default_prompt: "Use $state-machine-docs to map this project's architecture and module states into standalone HTML with grouped and flat diagrams."
+policy:
+  allow_implicit_invocation: false

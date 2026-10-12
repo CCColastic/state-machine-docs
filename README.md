@@ -4,6 +4,18 @@ A portable Agent Skill for producing source-grounded architecture maps and state
 
 The skill guides an agent to inspect a project, map its actual implementation, create grouped and flat diagrams with linked source excerpts, and verify the generated file. It includes a reusable HTML template, a vendored Mermaid renderer, a section schema, a source refresher, and tests for the generic builder.
 
+## Example output
+
+The generated explorer includes module navigation, source-grounded diagrams, grouped and flat views, zoom controls, and expandable source evidence.
+
+![Full architecture explorer](assets/example-explorer.png)
+
+The same architecture diagram can be viewed grouped by ownership or as a flat graph.
+
+![Grouped architecture diagram](assets/example-grouped.png)
+
+![Flat architecture diagram](assets/example-flat.png)
+
 ## Install
 
 Clone this repository into the skill directory for your agent:

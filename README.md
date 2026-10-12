@@ -30,13 +30,17 @@ For project-only installation, use `.agents/skills/state-machine-docs` with Code
 
 The skill is explicit-invocation-only. Claude Code and Pi read `disable-model-invocation: true` from `SKILL.md`. Codex reads `policy.allow_implicit_invocation: false` from `agents/openai.yaml`. The Codex metadata file is optional and can be ignored by other agents.
 
-Each agent needs shell access and Python to run the included builder. Browser verification is optional and uses the host's available browser automation tool.
+Each agent needs shell access and Python to run the included builder. Verify every grouped and flat diagram with the host's browser automation tool or equivalent browser checks. If browser verification is unavailable, report that limitation instead of claiming the diagrams were verified.
 
 ## Project output
 
 The skill generates `docs/architecture/index.html`, `index.md`, and `revision.json` in the target project. Run `python scripts/build_architecture_docs.py` in that project to regenerate the explorer, followed by `python scripts/build_architecture_docs.py --check` to check source freshness.
 
 The generated explorer is a source snapshot. It does not observe a running application.
+
+Exploration follows implementation components into their decisions, collaborators, state changes and failure paths. Meaningful modules get sidebar detail views. The manifest's `coverage` records link discovered components to those views or explain exclusions; an overview or file inventory alone does not establish coverage.
+
+The browser verifier rejects invalid diagrams, rendering failures and differences in nodes, connections or labels between grouped and flat views. Existing projects need the updated generator and template, plus a source-reviewed `coverage` list, before regeneration. See [the section schema](references/sections.md).
 
 ## Verify the bundled builder
 

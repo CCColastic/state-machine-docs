@@ -13,6 +13,11 @@ SPEC.loader.exec_module(builder)
 
 
 class BuildDocumentationTests(unittest.TestCase):
+    def update_manifest(self, change):
+        manifest = json.loads(self.manifest.read_text(encoding="utf-8"))
+        change(manifest)
+        self.manifest.write_text(json.dumps(manifest), encoding="utf-8")
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(dir=Path.cwd())
         self.addCleanup(self.temporary.cleanup)
@@ -65,6 +70,11 @@ class BuildDocumentationTests(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+        def add_detail(manifest):
+            detail = dict(manifest["sections"][0], id="worker", title="Worker decisions")
+            manifest["sections"].append(detail)
+            manifest["coverage"] = [{"path": "src/jobs.js", "symbol": "states", "section": "worker"}]
+        self.update_manifest(add_detail)
 
     def test_non_python_source_embeds_safely_and_build_is_deterministic(self):
         builder.build(self.root, self.manifest)
@@ -90,8 +100,38 @@ class BuildDocumentationTests(unittest.TestCase):
         self.assertEqual(builder.build(self.root, self.manifest, write=False), [])
 
     def test_source_outside_project_is_rejected(self):
+        outside = tempfile.TemporaryDirectory(dir=Path.cwd())
+        self.addCleanup(outside.cleanup)
+        source = Path(outside.name) / "outside.js"
+        source.write_text("export const secret = 'fixture';\n", encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "existing project file"):
-            builder.source_path(self.root, "../outside.js")
+            builder.source_path(self.root, str(source))
+
+    def test_coverage_requires_discovery_and_cited_detail(self):
+        self.update_manifest(lambda manifest: manifest.pop("coverage"))
+        with self.assertRaisesRegex(ValueError, "record coverage"):
+            builder.build(self.root, self.manifest)
+        self.update_manifest(lambda manifest: manifest.update(coverage=[
+            {"path": "src/jobs.js", "symbol": "states", "section": "overview"}
+        ]))
+        with self.assertRaisesRegex(ValueError, "module detail"):
+            builder.build(self.root, self.manifest)
+        self.update_manifest(lambda manifest: manifest["coverage"][0].update(section="worker"))
+        self.update_manifest(lambda manifest: manifest["sections"][1].update(sources=[]))
+        with self.assertRaisesRegex(ValueError, "cite the covered"):
+            builder.build(self.root, self.manifest)
+
+    def test_excluded_component_is_still_fingerprinted(self):
+        self.update_manifest(lambda manifest: manifest["coverage"][0].update(
+            section=None, reason="Pure display helper without domain decisions"
+        ))
+        self.update_manifest(lambda manifest: manifest.update(watch=[]))
+        self.update_manifest(lambda manifest: [section.update(sources=[]) for section in manifest["sections"]])
+        builder.build(self.root, self.manifest)
+        revision = json.loads((self.directory / "revision.json").read_text(encoding="utf-8"))
+        self.assertIn("src/jobs.js", revision["sources"])
+        self.source.write_text("export const changed = true;\n", encoding="utf-8")
+        self.assertIn("index.html", builder.build(self.root, self.manifest, write=False))
 
 
 if __name__ == "__main__":

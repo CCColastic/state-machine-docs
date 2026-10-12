@@ -32,6 +32,24 @@ def build(project_root, manifest_path, write=True):
 
     referenced = set()
     symbols = {}
+    coverage = manifest.get("coverage")
+    if not coverage:
+        raise ValueError("Discover implementation components and record coverage first.")
+    for component in coverage:
+        path = source_path(root, component["path"])
+        if not component.get("symbol", "").strip():
+            raise ValueError("Coverage needs an implementation symbol.")
+        target = component.get("section")
+        reason = component.get("reason", "").strip()
+        if bool(target) == bool(reason):
+            raise ValueError("Coverage needs either a detail section or exclusion reason.")
+        if target:
+            detail = next((section for section in sections if section["id"] == target), None)
+            if detail is None or target == "overview":
+                raise ValueError(f"Coverage needs a module detail section: {target}")
+            if not any(source["path"] == component["path"] for source in detail.get("sources", [])):
+                raise ValueError(f"Detail section must cite the covered implementation: {target}")
+        referenced.add(path)
     for section in sections:
         section.setdefault("notes", [])
         section.setdefault("sources", [])
@@ -98,6 +116,7 @@ def build(project_root, manifest_path, write=True):
         "project": manifest["project"],
         "sections": sections,
         "modules": modules,
+        "coverage": coverage,
         "revision": revision,
         "projectHref": Path(os.path.relpath(root, directory)).as_posix(),
     }

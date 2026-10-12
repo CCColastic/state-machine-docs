@@ -1,12 +1,15 @@
 # Section records
 
-The manifest is JSON with `project`, `sections`, and optional `watch` fields.
+The manifest is JSON with `project`, `sections`, `coverage`, and optional `watch` fields.
 The first section has ID `overview`. IDs are unique URL-fragment-safe strings.
 
 ```json
 {
   "project": "Example service",
   "watch": ["src/**/*.js"],
+  "coverage": [
+    {"path": "src/api.js", "symbol": "submitJob", "section": "admission"}
+  ],
   "sections": [
     {
       "id": "overview",
@@ -19,6 +22,16 @@ The first section has ID `overview`. IDs are unique URL-fragment-safe strings.
         {"path": "src/api.js", "symbol": "submitJob", "start_line": 1, "end_line": 12}
       ],
       "tests": ["tests/jobs.test.js"]
+    },
+    {
+      "id": "admission",
+      "title": "Job admission",
+      "kind": "process",
+      "summary": "The API validates input and places accepted jobs in the queue.",
+      "mermaid": "flowchart TB\nn_input[\"Request\"] --> n_validate[\"Validate input\"]\nn_validate -->|accepted| n_queue[\"Enqueue job\"]\nn_validate -->|invalid| n_reject[\"Reject request\"]",
+      "sources": [
+        {"path": "src/api.js", "symbol": "submitJob", "start_line": 1, "end_line": 12}
+      ]
     }
   ]
 }
@@ -28,6 +41,25 @@ Paths are relative to the project root. `symbol` is a display label. The generic
 generator verifies files and line ranges, but it does not resolve symbols in
 every programming language. A project-specific collector can locate symbols
 and emit current line ranges before generation.
+
+`coverage` records components discovered by reading the implementation. Add it
+to the manifest after surveying entrypoints and tracing their collaborators:
+
+```json
+"coverage": [
+  {"path": "src/worker.js", "symbol": "processJob", "section": "worker"},
+  {"path": "src/format.js", "symbol": "formatLabel", "reason": "Presentation helper; no domain decisions or lifecycle."}
+]
+```
+
+Each component needs an existing non-overview detail section citing that source
+file, or a specific exclusion reason. Several closely related components may
+share a detail section. Include meaningful functions within one large file;
+file inventory alone misses subsystems. The generator validates these links
+and fingerprints excluded components too. It cannot prove the discovery list
+is exhaustive or that diagrams accurately describe the cited code. Audit the
+list against source declarations and calls. For older manifests, perform that
+discovery before adding coverage; do not manufacture entries merely to pass.
 
 `sources`, `notes`, and `tests` can be empty arrays. Cite implementation symbols
 for behavior and existing tests for relevant checks. Test links do not mean

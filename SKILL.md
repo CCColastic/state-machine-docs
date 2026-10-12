@@ -25,9 +25,27 @@ recipe for regeneration.
    an overview with links to deeper module views. Keep the overview as the
    landing page. Focus on application architecture by default; include
    benchmark and reporting maps when requested or part of the requested scope.
-4. For each stateful layer, identify states, events, guards, side effects,
+4. Build a source-discovery inventory before writing diagrams. Follow each
+   meaningful component into its implementation and its collaborators, not
+   just package names or graph registration. Include parallel branches, join
+   and merge behavior, routing, filters, transformations, domain services,
+   storage adapters, and failure handling when present. Use the repository's
+   own concepts; no framework or language is required.
+5. Give each meaningful module a sidebar detail view. Trace its inputs,
+   decisions, calls, outputs, mutations, and failure paths to concrete symbols.
+   A graph node that wraps a subsystem is a starting point for exploration.
+   Continue until its domain decisions and boundary interactions are visible.
+   Small leaf helpers can share a cohesive detail view; do not create a page
+   per file or invent states for stateless functions.
+6. For each stateful module, identify states, events, guards, side effects,
    terminal outcomes, and bounded retries from the source. For a stateless
    module, use an ownership or process diagram instead of inventing states.
+
+Record discovered components in the manifest's `coverage` list. Each needs a
+detail section or a specific exclusion reason. Compare that list against the
+source tree and registered stages, routes, plugins, or equivalent declarations.
+Do not count an overview, a source-file list, or a passing fingerprint check
+as module coverage. Revisit collaborators found while tracing each module.
 
 Finish this step with source references for every behavior described. Mark
 unresolved claims as unknown rather than drawing speculative transitions.
@@ -98,11 +116,21 @@ claiming the generic generator performs that extraction.
    assets and confirm it still renders.
 3. With a browser automation tool, run
    [the browser page function](scripts/verify_browser.js) against the open
-   file. It checks grouped/flat topology equality, self-loop dimensions and
+   file. It parses every diagram and requires rendered SVGs in both modes;
+   raw Mermaid text, error SVGs, and an unavailable renderer are failures.
+   It checks grouped/flat topology equality, self-loop dimensions and
    label placement, zoom, source expansion, navigation, and mobile overflow.
    If the environment cannot run that function, perform equivalent checks and
-   report the limitation. Inspect at least one rendered self-loop visually.
-4. Check a source-change experiment in a temporary copy. A changed watched file
+   report the limitation; do not claim rendering was verified. Inspect each
+   rendered view for clipped nodes, crossings through labels, and overlaps.
+   Repair failures and rerun the complete check. A render error must identify
+   the section and mode, including the parser error. Use prefixed node IDs
+   and quoted labels to avoid reserved words and punctuation conflicts.
+4. Audit coverage against the source inventory. Open the sidebar detail views
+   and confirm they explain implementation decisions rather than repeat the
+   parent pipeline. Review inputs, merge semantics, guards, and failure paths
+   from source. Coverage validation checks references, not discovery quality.
+5. Check a source-change experiment in a temporary copy. A changed watched file
    must fail `--check`; regeneration must restore a passing check. Recheck
    representative transition guards against the implementation.
 

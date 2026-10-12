@@ -4,12 +4,6 @@ A portable Agent Skill for producing source-grounded architecture maps and state
 
 The skill guides an agent to inspect a project, map its actual implementation, create grouped and flat diagrams with linked source excerpts, and verify the generated file. It includes a reusable HTML template, a vendored Mermaid renderer, a section schema, a source refresher, and tests for the generic builder.
 
-## Example output
-
-The explorer includes module navigation, grouped and flat diagrams, zoom controls, behavior notes, and expandable source excerpts.
-
-![Example architecture explorer generated for CampusMind Agent](assets/example-output.svg)
-
 ## Install
 
 Clone this repository into the skill directory for your agent:
